@@ -1,4 +1,6 @@
 ---
+- src: syncrou.manageiq-vmdb
+
 - name: Service Linking via an href slug
   manageiq_vmdb:
     href: "href_slug::{{ manageiq.service }}"
