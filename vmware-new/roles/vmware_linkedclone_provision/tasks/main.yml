@@ -34,12 +34,22 @@
   async: 3600
   poll: 0
 
+- name: Log vmware_created_vms
+  debug: 
+    var: vmware_created_vms
+  when: verbose
+
 - name: Wait for instance creation to complete
   async_status: jid={{ item.ansible_job_id }}
   register: vmware_jobs
   until: vmware_jobs.finished
-  retries: 300
+  retries: 100
   with_items: "{{ vmware_created_vms.results }}"
+
+- name: Log vmware_jobs
+  debug: 
+    var: vmware_jobs
+  when: verbose
 
 - name: Log item.instance.ipv4
   debug: 
