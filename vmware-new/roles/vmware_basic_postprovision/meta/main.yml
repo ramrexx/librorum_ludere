@@ -13,4 +13,5 @@ galaxy_info:
       - 7
   categories:
     - cloudforms
-dependencies: []
+dependencies:
+  - src: syncrou.manageiq-vmdb
