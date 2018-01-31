@@ -54,7 +54,7 @@
 - name: Log item.instance.ipv4
   debug: 
     var: item.instance.ipv4
-  with_items: "{{ vmware_created_vms.results }}"
+  with_items: "{{ vmware_jobs.results }}"
   when: verbose
 
 - name: Add newwms to a group
