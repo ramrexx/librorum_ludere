@@ -7,6 +7,8 @@
     - role: vmware_basic_preprovision
       when: manageiq is defined
 
+    - role: syncrou.manageiq-vmdb
+
     - role: vmware_basic_vmname
     
     - role: vmware_linkedclone_provision
