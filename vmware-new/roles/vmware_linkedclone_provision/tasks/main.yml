@@ -30,34 +30,24 @@
     state: poweredon
   delegate_to: localhost
   with_items: "{{ vm_names }}"
-  register: vmware_created_vms
+  register: vmware_created_vms_async
   async: 3600
   poll: 0
 
-- name: Log vmware_created_vms
-  debug: 
-    var: vmware_created_vms
-  when: verbose
-
 - name: Wait for instance creation to complete
   async_status: jid={{ item.ansible_job_id }}
-  register: vmware_jobs
-  until: vmware_jobs.finished
+  register: vmware_created_vms
+  until: vmware_created_vms.finished
   retries: 100
-  with_items: "{{ vmware_created_vms.results }}"
-
-- name: Log vmware_jobs
-  debug: 
-    var: vmware_jobs
-  when: verbose
+  with_items: "{{ vmware_created_vms_async.results }}"
 
 - name: Log item.instance.ipv4
   debug: 
     var: item.instance.ipv4
-  with_items: "{{ vmware_jobs.results }}"
+  with_items: "{{ vmware_created_vms.results }}"
   when: verbose
 
-- name: Add newwms to a group
+- name: Add vmware_created_vms ip address to a vmware_hosts group
   add_host: 
     name: "{{ item.instance.ipv4 }}"
     groups: vmware_hosts
