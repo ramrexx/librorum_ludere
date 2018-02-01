@@ -11,7 +11,7 @@
     
     - role: vmware_linkedclone_provision
 
-    - role: manageiq-vmdb
+    - manageiq-vmdb
 
     - role: vmware_basic_postprovision
       when: vmware_created_vms is defined and manageiq is defined
