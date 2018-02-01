@@ -1,2 +1,3 @@
 ---
-- src: syncrou.manageiq-vmdb
+- src: https://github.com/syncrou/manageiq-vmdb
+  name: manageiq_vmdb
