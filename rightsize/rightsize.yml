@@ -1,0 +1,78 @@
+---
+- name: rightsize
+  hosts: localhost
+  gather_facts: false
+
+  pre_tasks:
+    - name: logging manageiq object
+      debug: var=manageiq
+      when: manageiq is defined
+
+  vars:
+    # vcenter parameters
+    hostname: "{{ lookup('env', 'VMWARE_HOST') }}"
+    username: "{{ lookup('env', 'VMWARE_USER') }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
+    validate_certs: false
+
+    # vm guest parameters
+    uuid:
+    name:
+    memory_mb:
+    num_cpus:
+
+  tasks:
+    - name: Poweroff instance
+      vmware_guest:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: "{{ validate_certs }}"
+        uuid: "{{ uuid | default(omit, true) }}"
+        name: "{{ name | default(omit, true) }}"
+        state: poweredoff
+      delegate_to: localhost
+      register: poweroff_output
+
+    - name: Log poweroff_output
+      debug:
+        var: poweroff_output
+      when: verbose
+
+    - name: Reconfigure instance
+      vmware_guest:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: "{{ validate_certs }}"
+        uuid: "{{ uuid | default(omit, true)}}"
+        name: "{{ name | default(omit, true)}}"
+        hardware:
+          memory_mb: "{{ memory_mb | default(omit, true) }}"
+          num_cpus: "{{ num_cpus | default(omit, true) }}"
+        state: present
+      delegate_to: localhost
+      register: reconfigure_output
+      when: memory_mb is defined or num_cpus is defined
+
+    - name: Log reconfigure_output
+      debug:
+        var: reconfigure_output
+      when: verbose
+
+    - name: Poweron instance
+      vmware_guest:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: "{{ validate_certs }}"
+        uuid: "{{ uuid | default(omit, true)}}"
+        name: "{{ name | default(omit, true)}}"
+        state: poweredon
+      delegate_to: localhost
+      register: poweredon_output
+
+    - name: Log poweredon_output
+      debug:
+        var: poweredon_output
+      when: verbose
